@@ -9,6 +9,9 @@
   <title>TinyApp</title>
 </head>
 <body>
+  <header>
+      <%- include("../views/partials/_header.ejs") %>
+  </header>
   <main style="margin: 1em;">
     <h3>My URLs</h3>
     <table class="table">
@@ -21,7 +24,7 @@
       <tbody>
         <% for(let url in urls) { %>
           <tr>
-            <td><%= url %></td>
+            <td><a href="link"><%= url %></a></td>
             <td><%= urls[url] %></td>
           </tr>
         <% } %>
