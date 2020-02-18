@@ -70,6 +70,12 @@ app.post("/urls", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// POST /urls/:shortURL/delete
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL]
+  res.redirect("/urls");
+});
 
 
 
