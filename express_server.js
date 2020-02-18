@@ -39,10 +39,10 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-// app.get("/urls/:shortURL", (req, res) => {
-//   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
-//   res.render("urls_show", templateVars);
-// });
+app.get("/urls/:shortURL", (req, res) => {
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  res.render("urls_show", templateVars);
+});
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]
@@ -66,17 +66,23 @@ app.post("/urls", (req, res) => {
 
   console.log(urlDatabase);  // Log the POST request body to the console
   // res.send("Ok");         // Respond with 'Ok' (we will replace this)
-  let templateVars = { shortURL: newShortURL, longURL: newLongURL};
-  res.render("urls_show", templateVars);
+  res.redirect("/urls/"+ newShortURL);
 });
 
 // POST /urls/:shortURL/delete
 
-app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL]
+app.post("/urls/:url/delete", (req, res) => {
+  delete urlDatabase[req.params.url]
   res.redirect("/urls");
 });
 
+app.post("/urls/:shortURL/update", (req, res) => {
+  urlDatabase[req.params.shortURL] = req.body["longURL"]
+  res.redirect("/urls");
+});
 
+app.post("/urls/:url/edit", (req, res) => {
+  res.redirect("/urls/" + req.params.url);
+});
 
 
