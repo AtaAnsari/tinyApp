@@ -4,6 +4,14 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>URL - TinyApp Example</title>
+  <style>
+    .updateForm{
+    width: 100%;
+    }
+  .Username {
+    margin-right: 15px;
+  }
+  </style>
 </head>
 
 <body>
@@ -17,10 +25,10 @@
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       </div>
         <form class="form-inline" action="/urls/<%= shortURL %>/update" method="POST">
-        <div class="form-group mb-2">
+        <div class="updateForm">
           <label for="longURL">Enter a URL:</label>
           <input value = "<%= longURL %>" class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
-          <button class="btn btn-outline-danger">Update</button>
+          <button type="submit" class="btn btn-outline-primary">Update</button>
         </div>
       </form>
     <div class="card-footer text-muted"></div>

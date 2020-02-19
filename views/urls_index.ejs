@@ -7,6 +7,11 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
+  <style>
+  .Username {
+    margin-right: 15px;
+  }
+  </style>
 </head>
 <body>
   <header>
@@ -29,7 +34,7 @@
           <tr>
             <td><a href="/urls/<%= url %>"><%= url %></a></td>
             <td><%= urls[url] %></td>
-            <td><form class="form-inline" method="POST" action="/urls/<%= url %>/edit"><button class="btn btn-outline-danger">Edit</button></form></td>
+            <td><form class="form-inline" method="POST" action="/urls/<%= url %>/edit"><button type="submit" class="btn btn-outline-primary">Edit</button></form></td>
             <td><form class="form-inline" method="POST" action="/urls/<%= url %>/delete"><button class="btn btn-outline-danger">Delete</button></form></td>
 
           </tr>
