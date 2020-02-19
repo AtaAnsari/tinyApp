@@ -26,11 +26,9 @@ const randomString = function(){
 const emailExists = function(email){
   for(Id in users){
     if(users[Id]["email"] === email) {
-      console.log("found a match!")
       return true
     }
   }
-  console.log(users[Id]["email"])
   return false
 };
 
@@ -66,15 +64,7 @@ const users = {
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase,
-    username: req.cookies["username"],
-    user: users[req.cookies["user_id"]]
-  };
-  res.render("urls_index", templateVars);
-});
-
-app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase,
-    username: req.cookies["username"],
+    // username: req.cookies["username"],
     user: users[req.cookies["user_id"]]
   };
   res.render("urls_index", templateVars);
@@ -84,7 +74,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"], 
+    // username: req.cookies["username"] 
     user: users[req.cookies["user_id"]]
   };
   res.render("urls_new", templateVars);
@@ -93,8 +83,9 @@ app.get("/urls/new", (req, res) => {
 // Establishing a route to the registration page
 app.get("/register", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
-    user: users[req.cookies["user_id"]]};
+    // username: req.cookies["username"] 
+    user: users[req.cookies["user_id"]]
+  };
   res.render("urls_register", templateVars);
 });
 
@@ -103,7 +94,7 @@ app.get("/register", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL],
-  username: req.cookies["username"],
+  // username: req.cookies["username"] 
   user: users[req.cookies["user_id"]]
 };
   res.render("urls_show", templateVars);
