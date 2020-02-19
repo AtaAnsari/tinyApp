@@ -11,11 +11,24 @@
       </div>
     </div>
   </nav>
-  <form class="form-inline" action="/login" method="POST">
-    <div class="form-group mb-2">
-      <label for="username">Enter username:</label>
-      <input class="form-control" type="text" name="username" placeholder="username" style="width: 300px; margin: 1em">
-      <button class="btn btn-outline-danger">Submit</button>
-    </div>
-  </form>
+  <% if(username){ %>
+    <form class="form-inline" action="/logout" method="POST">
+      <div class="form-group mb-2">
+        <button class="btn btn-outline-danger">logout</button>
+      </div>
+      <span><%= username %></span>
+    </form>
+  <% } else { %>  
+    <form class="form-inline" action="/login" method="POST">
+      <div class="form-group mb-2">
+        <label for="username">Enter username:</label>
+        <input class="form-control" type="text" name="username" placeholder="username" style="width: 300px; margin: 1em">
+        <button class="btn btn-outline-danger">Submit</button>
+      </div>
+      <span><%= username %></span>
+    </form>
+ <% } %>
+ 
+  
 </header>
+
