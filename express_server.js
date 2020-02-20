@@ -133,7 +133,7 @@ app.get("/login", (req, res) => {
 // setting up route to the page that the user will be redirected to when they create a new shortURL
 
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL],
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]["longURL"],
   user: users[req.cookies["user_id"]]
 };
   res.render("urls_show", templateVars);
@@ -152,7 +152,12 @@ app.post("/urls", (req, res) => {
 
   const newShortURL = randomString();
   const newLongURL = req.body["longURL"]
-  urlDatabase[newShortURL] = newLongURL
+  // urlDatabase[newShortURL] = newLongURL
+  urlDatabase[newShortURL] = {
+      "longURL": newLongURL,
+      "Id": req.cookies["user_id"]
+  }
+  console.log(urlDatabase)
   res.redirect("/urls/"+ newShortURL);
 });
 
