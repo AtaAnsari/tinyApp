@@ -58,6 +58,16 @@ const identityConfirm = function (email, password) {
   }
 }
 
+const urlsForUser = function (id, urlDatabase) {
+  const personalURLs = {}
+  for (shortURL in urlDatabase){
+    if(id === urlDatabase[shortURL].Id) {
+      personalURLs[shortURL] = urlDatabase[shortURL]
+    }
+  }
+  return personalURLs
+};
+
 
 
 // Defining urlDatabase
@@ -65,7 +75,7 @@ const identityConfirm = function (email, password) {
 const urlDatabase = {
   "b2xVn2": {longURL: "http://www.lighthouselabs.ca", Id: "dsaaw3"},
   "9sm5xK": {longURL: "http://www.google.com", Id: "dsaaw2"},
-  "j4yori": { longURL: 'http://www.tile.com', Id: "asds09" }
+  "j4yori": { longURL: 'http://www.tile.com', Id: "asds" }
 };
 
 app.listen(PORT, () => {
@@ -95,17 +105,24 @@ const users = {
 
 
 // setting up route to the main page, will render main page
+// app.get("/urls", (req, res) => {
+//   let templateVars = { urls: urlDatabase,
+//     user: users[req.cookies["user_id"]],
+//   };
+//   if(req.cookies["user_id"]){
+//     console.log(urlDatabase);
+//   res.render("urls_index", templateVars);
+//   } else {
+//     res.redirect("/login")
+//   }
+// });
+
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase,
     user: users[req.cookies["user_id"]],
   };
-  if(req.cookies["user_id"]){
-    console.log(urlDatabase);
   res.render("urls_index", templateVars);
-  } else {
-    res.redirect("/login")
-  }
 });
 
 // setting up route to the new URL page, will render the form on new URL page
@@ -144,13 +161,23 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]["longURL"],
   user: users[req.cookies["user_id"]]
 };
-  res.render("urls_show", templateVars);
-});
+  if(req.cookies["user_id"]){
+    if(urlsForUser(req.cookies["user_id"], urlDatabase)[req.params.shortURL].Id === req.cookies["user_id"]){
+      res.render("urls_show", templateVars);
+    } else {
+      res.redirect("/login");
+  }}
+  else {
+    res.redirect("/login");
+  }
+}
+);
 
 // setting up route to the destination website once we click on the shortURL link
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL]
+  console.log("Paramsname", req.params)
+  const longURL = urlDatabase[req.params.shortURL]["longURL"]
   res.redirect(longURL);
 });
 
@@ -172,15 +199,32 @@ app.post("/urls", (req, res) => {
 // routing to facillitate the delete feature
 
 app.post("/urls/:url/delete", (req, res) => {
-  delete urlDatabase[req.params.url]
-  res.redirect("/urls");
+  if(req.cookies["user_id"]){
+    if(urlsForUser(req.cookies["user_id"], urlDatabase)[req.params.url].Id === req.cookies["user_id"]){
+      delete urlDatabase[req.params.url]
+      res.redirect("/urls");
+    } else {
+      res.redirect("/login");
+  }}
+  else {
+    res.redirect("/login");
+  }
 });
 
 // routing to facillitate the update feature
 
 app.post("/urls/:shortURL/update", (req, res) => {
-  urlDatabase[req.params.shortURL]["longURL"] = req.body["longURL"]
-  res.redirect("/urls");
+  if(req.cookies["user_id"]){
+    if(urlsForUser(req.cookies["user_id"], urlDatabase)[req.params.shortURL].Id === req.cookies["user_id"]){
+      urlDatabase[req.params.shortURL]["longURL"] = req.body["longURL"]
+      res.redirect("/urls");
+    } else {
+      res.redirect("/login");
+  }
+  }
+  else {
+    res.redirect("/login");
+  }
 });
 
 // routing to the show url page once the edit button is clicked on the main page
@@ -207,7 +251,7 @@ app.post("/login", (req, res) => {
       res.cookie("user_id", idCatcher(password) )
       res.redirect("/urls");
     } else {
-    res.status(403).send("403 ERROR")
+    res.status(422).send("422 ERROR")
   }
 }
 });
