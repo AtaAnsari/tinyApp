@@ -19,16 +19,12 @@
         
       </form>
     <% } else { %>  
-      <form class="form-inline" action="/login" method="POST">
-        <div class="form-group mb-2">
-          <input class="form-control" type="text" name="username" placeholder="username" style="width: 300px; margin: 1em">
-          <button type="submit" class="btn btn-outline-dark">Login</button>
-        </div>
-      </form>
-   <% } %>
+      <a href="/loginButton" class="badge badge-dark">Login</a>
+      <a href="/register" class="badge badge-dark">Register</a>
+
+  <% } %>
   </nav>
   
- 
   
 </header>
 
