@@ -33,7 +33,7 @@
         <% for(let url in urls) { %>
           <tr>
             <td><a href="/urls/<%= url %>"><%= url %></a></td>
-            <td><%= urls[url] %></td>
+            <td><%= urls[url]["longURL"] %></td>
             <td><form class="form-inline" method="POST" action="/urls/<%= url %>/edit"><button type="submit" class="btn btn-outline-primary">Edit</button></form></td>
             <td><form class="form-inline" method="POST" action="/urls/<%= url %>/delete"><button class="btn btn-outline-danger">Delete</button></form></td>
 

@@ -58,11 +58,14 @@ const identityConfirm = function (email, password) {
   }
 }
 
-// Defining Database
+
+
+// Defining urlDatabase
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {longURL: "http://www.lighthouselabs.ca", Id: "dsaaw3"},
+  "9sm5xK": {longURL: "http://www.google.com", Id: "dsaaw2"},
+  "j4yori": { longURL: 'http://www.tile.com', Id: "asds09" }
 };
 
 app.listen(PORT, () => {
@@ -95,9 +98,14 @@ const users = {
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase,
-    user: users[req.cookies["user_id"]]
+    user: users[req.cookies["user_id"]],
   };
+  if(req.cookies["user_id"]){
+    console.log(urlDatabase);
   res.render("urls_index", templateVars);
+  } else {
+    res.redirect("/login")
+  }
 });
 
 // setting up route to the new URL page, will render the form on new URL page
@@ -171,7 +179,7 @@ app.post("/urls/:url/delete", (req, res) => {
 // routing to facillitate the update feature
 
 app.post("/urls/:shortURL/update", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body["longURL"]
+  urlDatabase[req.params.shortURL]["longURL"] = req.body["longURL"]
   res.redirect("/urls");
 });
 
