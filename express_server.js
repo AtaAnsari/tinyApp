@@ -1,6 +1,6 @@
 const express = require("express");
 var cookieParser = require('cookie-parser')
-
+const bcrypt = require('bcrypt');
 var app = express()
 app.use(cookieParser())
 
@@ -35,7 +35,7 @@ const emailExists = function(email){
 // passwordFinder helper function
 const passwordExists = function(password){
   for(Id in users){
-    if(users[Id]["password"] === password) {
+    if(bcrypt.compareSync(password , users[Id].password)) {
       return true
     }
   }
@@ -44,7 +44,7 @@ const passwordExists = function(password){
 // ID catcher helper function 
 const idCatcher = function(password){
   for(Id in users){
-    if(users[Id]["password"] === password) {
+    if(passwordExists(password)) {
       return Id
     }
   }
@@ -86,36 +86,11 @@ app.listen(PORT, () => {
 // Setting up users database
 
 const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  },
-  "asds":{
-    id: "asds",
-    email: "l@gmail.com",
-    password: "l"
-  }
+  '5wp9i9': 
+    { id: '5wp9i9',
+    email: 'h@gmail.com',
+    password: '$2b$10$5jDfb2qYlcD4z1zuE4Zyuei2ptU9EX/dVwdpqer5UXfBfdnSK2BBq' } 
 }
-
-
-// setting up route to the main page, will render main page
-// app.get("/urls", (req, res) => {
-//   let templateVars = { urls: urlDatabase,
-//     user: users[req.cookies["user_id"]],
-//   };
-//   if(req.cookies["user_id"]){
-//     console.log(urlDatabase);
-//   res.render("urls_index", templateVars);
-//   } else {
-//     res.redirect("/login")
-//   }
-// });
 
 
 app.get("/urls", (req, res) => {
@@ -268,15 +243,18 @@ app.post("/logout", (req, res) => {
 app.post("/register", (req, res) => {
   const userId = randomString();
   const email = req.body["email"]
-  const password = req.body["password"]
+  const password = req.body["password"]; 
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
   if(emailExists(email) === true || email === ""){
     res.status(404).send("404 ERROR")
   } else {
   users[userId] =   {
     "id": userId,
   "email": email,
-  "password": password
+  "password": hashedPassword
   }
+  console.log(users)
   res.cookie("user_id", userId)
   res.redirect("/urls");
 }
