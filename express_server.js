@@ -106,7 +106,11 @@ app.get("/urls/new", (req, res) => {
   let templateVars = {
     user: users[req.cookies["user_id"]]
   };
-  res.render("urls_new", templateVars);
+  if(req.cookies["user_id"]){
+    res.render("urls_new", templateVars);
+  } else {
+    res.render("urls_login", templateVars);
+  }
 });
 
 // Establishing a route to the registration page
