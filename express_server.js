@@ -54,7 +54,6 @@ const idCatcher = function(password){
 // Confirm that the cx username and pw match
 const identityConfirm = function (email, password) {
   if(users[idCatcher(password)]["email"] === email){
-    console.log("email matches")
     return true
   }
 }
