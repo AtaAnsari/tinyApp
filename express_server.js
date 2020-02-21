@@ -1,3 +1,4 @@
+const {emailExists} = require('./helpers')
 const express = require("express");
 var cookieSession = require('cookie-session')
 const bcrypt = require('bcrypt');
@@ -28,15 +29,6 @@ const randomString = function() {
 
 }
 
-// emailFinder helper function 
-const emailExists = function(email) {
-  for (Id in users) {
-    if (users[Id]["email"] === email) {
-      return true
-    }
-  }
-  return false
-};
 
 // passwordFinder helper function
 const passwordExists = function(password) {
@@ -280,6 +272,7 @@ app.post("/register", (req, res) => {
       "email": email,
       "password": hashedPassword
     }
+
     // res.cookie("user_id", userId)
     req.session.user_id = userId;
     res.redirect("/urls");
