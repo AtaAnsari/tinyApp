@@ -7,8 +7,18 @@ const emailExists = function(email, users) {
   return false
 };
 
+const getUserByEmail = function(email, users) {
+  for (id in users) {
+    if (users[id]["email"] === email) {
+      return users[id].id
+    } else {
+      return undefined
+    }
+  }
+};
 
 
 module.exports = {
-  emailExists
+  emailExists,
+  getUserByEmail
 }

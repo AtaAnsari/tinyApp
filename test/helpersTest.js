@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 
-const { emailExists, identityConfirm } = require('../helpers.js');
+const { emailExists, getUserByEmail} = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -14,6 +14,22 @@ const testUsers = {
     password: "dishwasher-funk"
   }
 };
+
+describe('getUserByEmail', function() {
+  it('should return a user with valid email', function() {
+    const user = getUserByEmail("user@example.com", testUsers)
+    const expectedOutput = "userRandomID";
+    // Write your assert statement here
+    assert.equal(user, expectedOutput);
+  });
+  it('should return undefined when an invalid email is passed', function() {
+    const user = getUserByEmail("fake@example.com", testUsers)
+    const expectedOutput = undefined;
+    // Write your assert statement here
+    assert.equal(user, expectedOutput);
+  });
+});
+
 
 describe('emailExists', function() {
   it('Should return true if email exists in user database', function() {
