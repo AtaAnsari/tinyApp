@@ -34,6 +34,7 @@ const randomString = function() {
 const passwordExists = function(password) {
   for (Id in users) {
     if (bcrypt.compareSync(password, users[Id].password)) {
+      console.log('passwordexists');
       return true
     }
   }
@@ -43,6 +44,7 @@ const passwordExists = function(password) {
 const idCatcher = function(password) {
   for (Id in users) {
     if (passwordExists(password)) {
+      console.log('id corresponding to pw found');
       return Id
     }
   }
@@ -52,6 +54,7 @@ const idCatcher = function(password) {
 // Confirm that the cx username and pw match
 const identityConfirm = function(email, password) {
   if (users[idCatcher(password)]["email"] === email) {
+    console.log(' id confirmed');
     return true
   }
 }
@@ -87,23 +90,31 @@ const users = {
   '5wp9i9':
   {
     id: '5wp9i9',
-    email: 'h@gmail.com',
-    password: '$2b$10$5jDfb2qYlcD4z1zuE4Zyuei2ptU9EX/dVwdpqer5UXfBfdnSK2BBq'
+    email: 'd@d.ca',
+    password: bcrypt.hashSync('123', 10)
   }
 }
 
+// route to handle get request to "/urls"
 
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlsForUser(req.session.user_id, urlDatabase),
   user: users[req.session.user_id]
   };
   if(req.session.user_id){
-    console.log(urlDatabase);
   res.render("urls_index", templateVars);
   } else {
-    res.redirect("/login")
+    res.redirect("/logintoview")
   }
 });
+
+// route to handle redirect from "/urls" if user isn't logged in
+app.get("/logintoview", (req, res) => {
+  let templateVars = { user: users[req.session.user_id]
+    };
+  res.render("loginToView", templateVars);
+});
+
 
 // setting up route to the new URL page, will render the form on new URL page
 
@@ -240,11 +251,12 @@ app.post("/login", (req, res) => {
   const userId = randomString();
   const email = req.body["email"]
   const password = req.body["password"]
-  if (!emailExists(email)) {
+  if (!emailExists(email, users)) {
     res.status(403).send("403 ERROR")
   } else {
     if (passwordExists(password) === true && identityConfirm(email, password) === true) {
       // res.cookie("user_id", idCatcher(password) )
+      console.log('successful login');
       req.session.user_id = idCatcher(password);
       res.redirect("/urls");
     } else {
