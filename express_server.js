@@ -146,8 +146,11 @@ app.get("/urls/:shortURL", (req, res) => {
     shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]["longURL"],
     user: users[req.session.user_id]
   };
+  const userDatabase = urlsForUser(req.session.user_id, urlDatabase);
+  if(!userDatabase[req.params.shortURL]){
+    return res.redirect("/login");
+  }
   if (req.session.user_id) {
-    console.log(urlsForUser(req.session.user_id, urlDatabase));
     if (urlsForUser(req.session.user_id, urlDatabase)[req.params.shortURL].Id === req.session.user_id) {
       res.render("urls_show", templateVars);
     } else {
@@ -163,7 +166,6 @@ app.get("/urls/:shortURL", (req, res) => {
 // setting up route to the destination website once we click on the shortURL link
 
 app.get("/u/:shortURL", (req, res) => {
-  console.log("Paramsname", req.params)
   const longURL = urlDatabase[req.params.shortURL]["longURL"]
   res.redirect(longURL);
 });
@@ -179,7 +181,6 @@ app.post("/urls", (req, res) => {
     "longURL": newLongURL,
     "Id": req.session.user_id
   }
-  console.log(urlDatabase)
   res.redirect("/urls/" + newShortURL);
 });
 
@@ -209,10 +210,15 @@ app.post("/urls/:url/delete", (req, res) => {
 
 app.post("/urls/:shortURL/update", (req, res) => {
   if (req.session.user_id) {
-    if (urlsForUser(req.session.user_id, urlDatabase)[req.params.shortURL].Id === req.session.user_id) {
-      urlDatabase[req.params.shortURL]["longURL"] = req.body["longURL"]
-      res.redirect("/urls");
-    } else {
+    if(urlsForUser(req.session.user_id, urlDatabase)[req.params.shortURL]){
+      if (urlsForUser(req.session.user_id, urlDatabase)[req.params.shortURL].Id === req.session.user_id) {
+        urlDatabase[req.params.shortURL]["longURL"] = req.body["longURL"]
+        res.redirect("/urls");
+      } else {
+        res.redirect("/login");
+      }
+    }
+    else {
       res.redirect("/login");
     }
   }
@@ -274,7 +280,6 @@ app.post("/register", (req, res) => {
       "email": email,
       "password": hashedPassword
     }
-    console.log(users)
     // res.cookie("user_id", userId)
     req.session.user_id = userId;
     res.redirect("/urls");
