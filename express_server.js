@@ -34,7 +34,6 @@ const randomString = function() {
 const passwordExists = function(password) {
   for (Id in users) {
     if (bcrypt.compareSync(password, users[Id].password)) {
-      console.log('passwordexists');
       return true
     }
   }
@@ -44,7 +43,6 @@ const passwordExists = function(password) {
 const idCatcher = function(password) {
   for (Id in users) {
     if (passwordExists(password)) {
-      console.log('id corresponding to pw found');
       return Id
     }
   }
@@ -54,7 +52,6 @@ const idCatcher = function(password) {
 // Confirm that the cx username and pw match
 const identityConfirm = function(email, password) {
   if (users[idCatcher(password)]["email"] === email) {
-    console.log(' id confirmed');
     return true
   }
 }
@@ -75,8 +72,8 @@ const urlsForUser = function(id, urlDatabase) {
 
 const urlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", Id: "dsaaw3" },
-  "9sm5xK": { longURL: "http://www.google.com", Id: "dsaaw2" },
-  "j4yori": { longURL: 'http://www.tile.com', Id: "asds" }
+  "9sm5xK": { longURL: "http://www.google.com", Id: "5wp9i9" },
+  "j4yori": { longURL: 'http://www.tile.com', Id: "Twp919" }
 };
 
 app.listen(PORT, () => {
@@ -92,6 +89,12 @@ const users = {
     id: '5wp9i9',
     email: 'd@d.ca',
     password: bcrypt.hashSync('123', 10)
+  },
+  'Twp919':
+  {
+    id: 'Twp919',
+    email: 'c@c.ca',
+    password: bcrypt.hashSync('111', 10)
   }
 }
 
@@ -134,7 +137,11 @@ app.get("/register", (req, res) => {
   let templateVars = {
     user: users[req.session.user_id]
   };
-  res.render("urls_register", templateVars);
+  if(!req.session.user_id){
+    res.render("urls_register", templateVars);
+  } else {
+    res.redirect("/urls")
+  }
 });
 
 // Establishing a route to /login endpoint
@@ -143,7 +150,11 @@ app.get("/login", (req, res) => {
   let templateVars = {
     user: users[req.session.user_id]
   };
-  res.render("urls_login", templateVars);
+  if(!req.session.user_id){
+    res.render("urls_login", templateVars);
+  } else {
+    res.redirect("/urls")
+  }
 });
 
 // setting up route to the page that the user will be redirected to when they create a new shortURL
@@ -155,7 +166,7 @@ app.get("/urls/:shortURL", (req, res) => {
   };
   const userDatabase = urlsForUser(req.session.user_id, urlDatabase);
   if(!userDatabase[req.params.shortURL]){
-    return res.redirect("/login");
+    res.status(403).send("403 ERROR: You are not the owner of this url");
   }
   if (req.session.user_id) {
     if (urlsForUser(req.session.user_id, urlDatabase)[req.params.shortURL].Id === req.session.user_id) {
@@ -252,15 +263,14 @@ app.post("/login", (req, res) => {
   const email = req.body["email"]
   const password = req.body["password"]
   if (!emailExists(email, users)) {
-    res.status(403).send("403 ERROR")
+    res.status(403).send("403 ERROR: Invalid login credentials")
   } else {
     if (passwordExists(password) === true && identityConfirm(email, password) === true) {
       // res.cookie("user_id", idCatcher(password) )
-      console.log('successful login');
       req.session.user_id = idCatcher(password);
       res.redirect("/urls");
     } else {
-      res.status(422).send("422 ERROR")
+      res.status(403).send("403 ERROR: Invalid login credentials")
     }
   }
 });
@@ -280,9 +290,10 @@ app.post("/register", (req, res) => {
   const password = req.body["password"];
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-  if (emailExists(email) === true || email === "") {
-    res.status(404).send("404 ERROR")
-  } else {
+  if (emailExists(email, users) === true || email === "") {
+    if (passwordExists(email) === true || password === ""){
+      res.status(404).send("406 ERROR: entry not acceptable, please enter a valid username and password")
+    }} else {
     users[userId] = {
       "id": userId,
       "email": email,
