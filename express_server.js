@@ -94,11 +94,15 @@ const users = {
 
 
 app.get("/urls", (req, res) => {
-  let templateVars = {
-    urls: urlDatabase,
-    user: users[req.session.user_id],
+  let templateVars = { urls: urlsForUser(req.session.user_id, urlDatabase),
+  user: users[req.session.user_id]
   };
+  if(req.session.user_id){
+    console.log(urlDatabase);
   res.render("urls_index", templateVars);
+  } else {
+    res.redirect("/login")
+  }
 });
 
 // setting up route to the new URL page, will render the form on new URL page
